@@ -4,7 +4,7 @@ const API_URL = 'http://localhost:9010/book/';
 
 export default {
   getAllBooks() {
-    return axios.get(API_URL);
+    return axios.get(API_URL + 'all');
   },
 
   getBookById(bookId) {
@@ -12,7 +12,7 @@ export default {
   },
 
   createBook(book) {
-    return axios.post(API_URL, book);
+    return axios.post(API_URL + 'create', book);
   },
 
   updateBook(bookId, book) {
