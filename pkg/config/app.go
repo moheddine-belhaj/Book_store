@@ -1,23 +1,24 @@
 package config
 
-import(
+import (
+	// "fmt"
 	"github.com/jinzhu/gorm"
-	 _ "github.com/jinzhu/gorm/dialects/mysql"
-
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var (
 	db *gorm.DB
 )
 
-func Connect(){
-	d, err := gorm.Open("mysql", "my data base") // create and add the my data base !!!
+func Connect() {
+	// Replace the empty string with the PostgreSQL connection string
+	dsn := "host=localhost user=postgres dbname=store sslmode=disable password=0000" 
+	d, err := gorm.Open("postgres", dsn)
 	if err != nil {
 		panic(err)
 	}
 	db = d
 }
-
 
 func GetDB() *gorm.DB {
 	return db
