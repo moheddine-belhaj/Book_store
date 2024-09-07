@@ -3,18 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
-	// path/filepath
+	"fmt"
 	"github.com/gorilla/mux"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" // Use PostgreSQL dialect
 	"github.com/moheddine-belhaj/Book_store/pkg/routes"
 )
 
 func main() {
+	fmt.Println("Starting...")
 	r := mux.NewRouter()
-
-	// Serve static files from the dist directory
-	r.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir("./dist/"))))
-
 	routes.RegisterBookStoreRoutes(r)
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe("localhost:9010", r))

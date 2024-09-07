@@ -6,10 +6,14 @@ import (
 	"net/http"
 )
 
-func ParseBody(r *http.Request, X interface{}) {
-	if body, err := io.ReadAll(r.Body); err == nil {
-		if err := json.Unmarshal(body, X); err != nil {
-			return
-		}
+// ParseBody parses the request body into the given struct and returns an error if parsing fails.
+func ParseBody(r *http.Request, x interface{}) error {
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
 	}
+	if err := json.Unmarshal(body, x); err != nil {
+		return err
+	}
+	return nil
 }

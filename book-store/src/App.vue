@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <h1>Book Store</h1>
+
+    <!-- Create Book Form -->
     <div>
       <h2>Create a New Book</h2>
       <form @submit.prevent="createBook">
         <input v-model="newBook.name" placeholder="Book Name" required />
         <input v-model="newBook.author" placeholder="Author" required />
         <input v-model="newBook.publication" placeholder="Publication" required />
-        <button type="submit">Add Book</button>
+        <button type="submit" :disabled="isCreating">Add Book</button>
       </form>
     </div>
 
+    <!-- Book List -->
     <div>
       <h2>Books</h2>
       <table>
@@ -36,13 +39,14 @@
       </table>
     </div>
 
+    <!-- Edit Book Form -->
     <div v-if="editingBook">
       <h2>Edit Book</h2>
       <form @submit.prevent="updateBook">
         <input v-model="editingBook.name" placeholder="Book Name" required />
         <input v-model="editingBook.author" placeholder="Author" required />
         <input v-model="editingBook.publication" placeholder="Publication" required />
-        <button type="submit">Update Book</button>
+        <button type="submit" :disabled="isUpdating">Update Book</button>
       </form>
     </div>
   </div>
@@ -60,7 +64,9 @@ export default {
         author: '',
         publication: ''
       },
-      editingBook: null
+      editingBook: null,
+      isCreating: false,
+      isUpdating: false
     };
   },
 
@@ -69,50 +75,52 @@ export default {
   },
 
   methods: {
-    fetchBooks() {
-      BookService.getAllBooks()
-        .then(response => {
-          this.books = response.data;
-        })
-        .catch(error => {
-          console.error('There was an error fetching the books:', error);
-        });
+    async fetchBooks() {
+      try {
+        const response = await BookService.getAllBooks();
+        this.books = response.data;
+      } catch (error) {
+        console.error('Error fetching books:', error);
+      }
     },
 
-    createBook() {
-      BookService.createBook(this.newBook)
-        .then(() => {
-          this.fetchBooks();
-          this.newBook = { name: '', author: '', publication: '' };
-        })
-        .catch(error => {
-          console.error('There was an error creating the book:', error);
-        });
+    async createBook() {
+      this.isCreating = true;
+      try {
+        await BookService.createBook(this.newBook);
+        this.fetchBooks();
+        this.newBook = { name: '', author: '', publication: '' };
+      } catch (error) {
+        console.error('Error creating book:', error);
+      } finally {
+        this.isCreating = false;
+      }
     },
 
-    deleteBook(bookId) {
-      BookService.deleteBook(bookId)
-        .then(() => {
-          this.fetchBooks();
-        })
-        .catch(error => {
-          console.error('There was an error deleting the book:', error);
-        });
+    async deleteBook(bookId) {
+      try {
+        await BookService.deleteBook(bookId);
+        this.fetchBooks();
+      } catch (error) {
+        console.error('Error deleting book:', error);
+      }
     },
 
     editBook(book) {
       this.editingBook = { ...book };
     },
 
-    updateBook() {
-      BookService.updateBook(this.editingBook.id, this.editingBook)
-        .then(() => {
-          this.fetchBooks();
-          this.editingBook = null;
-        })
-        .catch(error => {
-          console.error('There was an error updating the book:', error);
-        });
+    async updateBook() {
+      this.isUpdating = true;
+      try {
+        await BookService.updateBook(this.editingBook.id, this.editingBook);
+        this.fetchBooks();
+        this.editingBook = null;
+      } catch (error) {
+        console.error('Error updating book:', error);
+      } finally {
+        this.isUpdating = false;
+      }
     }
   }
 };
@@ -140,5 +148,10 @@ th, td {
 
 button {
   margin-right: 10px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

@@ -1,10 +1,11 @@
 package config
 
 import (
-	// "fmt"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	// "log"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
+
 
 var (
 	db *gorm.DB
@@ -13,7 +14,7 @@ var (
 func Connect() {
 	// Replace the empty string with the PostgreSQL connection string
 	dsn := "host=localhost user=postgres dbname=store sslmode=disable password=0000" 
-	d, err := gorm.Open("postgres", dsn)
+	d, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

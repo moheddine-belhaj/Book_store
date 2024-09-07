@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,11 +10,13 @@ import (
 	"github.com/moheddine-belhaj/Book_store/pkg/utils"
 )
 
-var NewBook models.Book
-
 func GetBook(w http.ResponseWriter, r *http.Request) {
-	newBooks := models.GetAllBooks()
-	res, _ := json.Marshal(newBooks)
+	books := models.GetAllBooks()
+	res, err := json.Marshal(books)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
@@ -24,61 +25,103 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 func GetBookById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	ID, err := strconv.ParseUint(bookId, 10, 32) // Use ParseUint for uint conversion
 	if err != nil {
-		fmt.Println("error while parsing")
+		http.Error(w, "Invalid book ID", http.StatusBadRequest)
+		return
 	}
-	bookDetails, _ := models.GetBookById(ID)
-	res, _ := json.Marshal(bookDetails)
+	book, result := models.GetBookById(uint(ID))
+	if result.Error != nil {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
+	res, err := json.Marshal(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
-	CreateBook := &models.Book{}
-	utils.ParseBody(r, CreateBook)
-	b := CreateBook.CreateBook()
-	res, _ := json.Marshal(b)
-	w.WriteHeader(http.StatusOK)
+	var createBook models.Book
+	if err := utils.ParseBody(r, &createBook); err != nil {
+		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	book := createBook.CreateBook()
+	res, err := json.Marshal(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
 	w.Write(res)
 }
 
 func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	ID, err := strconv.ParseUint(bookId, 10, 32) // Use ParseUint for uint conversion
 	if err != nil {
-		fmt.Println("error while parsing")
+		http.Error(w, "Invalid book ID", http.StatusBadRequest)
+		return
 	}
-	book := models.DeleteBook(ID)
-	res, _ := json.Marshal(book)
+	book := models.DeleteBook(uint(ID))
+	if book.ID == 0 {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
+	res, err := json.Marshal(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
 func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	var updateBook = &models.Book{}
-	utils.ParseBody(r, updateBook)
+	var updateBook models.Book
+	if err := utils.ParseBody(r, &updateBook); err != nil {
+		http.Error(w, "Invalid request body: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 	vars := mux.Vars(r)
 	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	ID, err := strconv.ParseUint(bookId, 10, 32) // Use ParseUint for uint conversion
 	if err != nil {
-		fmt.Println("error while parsing")
+		http.Error(w, "Invalid book ID", http.StatusBadRequest)
+		return
 	}
-	bookDetails, db := models.GetBookById(ID)
+	book, result := models.GetBookById(uint(ID))
+	if result.Error != nil {
+		http.Error(w, "Book not found", http.StatusNotFound)
+		return
+	}
 	if updateBook.Name != "" {
-		bookDetails.Name = updateBook.Name
+		book.Name = updateBook.Name
 	}
 	if updateBook.Author != "" {
-		bookDetails.Author = updateBook.Author
+		book.Author = updateBook.Author
 	}
 	if updateBook.Publication != "" {
-		bookDetails.Publication = updateBook.Publication
+		book.Publication = updateBook.Publication
 	}
-	db.Save(&bookDetails)
-	res, _ := json.Marshal(bookDetails)
+	result = result.Save(&book)
+	if result.Error != nil {
+		http.Error(w, result.Error.Error(), http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(book)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
