@@ -16,10 +16,10 @@ export default {
   },
 
   updateBook(bookId, book) {
-    return axios.put(`${API_URL}${bookId}`, book);
+    return axios.put(`${API_URL}update/${bookId}`, book);
   },
 
   deleteBook(bookId) {
-    return axios.delete(`${API_URL}${bookId}`);
+    return axios.delete(`${API_URL}delete/${bookId}`);
   }
 };

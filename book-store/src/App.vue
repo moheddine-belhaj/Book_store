@@ -19,6 +19,7 @@
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Name</th>
             <th>Author</th>
             <th>Publication</th>
@@ -26,12 +27,13 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in books" :key="book.id">
+          <tr v-for="book in books" :key="book.ID">
+            <td>{{ book.ID }}</td>
             <td>{{ book.name }}</td>
             <td>{{ book.author }}</td>
             <td>{{ book.publication }}</td>
             <td>
-              <button @click="deleteBook(book.id)">Delete</button>
+              <button @click="confirmDelete(book.ID)">Delete</button>
               <button @click="editBook(book)">Edit</button>
             </td>
           </tr>
@@ -76,9 +78,11 @@ export default {
 
   methods: {
     async fetchBooks() {
+      console.log('Fetching books...');
       try {
         const response = await BookService.getAllBooks();
         this.books = response.data;
+        console.log('Fetched books:', this.books);  // Debugging line
       } catch (error) {
         console.error('Error fetching books:', error);
       }
@@ -88,7 +92,8 @@ export default {
       this.isCreating = true;
       try {
         await BookService.createBook(this.newBook);
-        this.fetchBooks();
+        console.log('Book created successfully');  // Debugging line
+        await this.fetchBooks();  // Ensure fetchBooks is awaited
         this.newBook = { name: '', author: '', publication: '' };
       } catch (error) {
         console.error('Error creating book:', error);
@@ -97,10 +102,26 @@ export default {
       }
     },
 
-    async deleteBook(bookId) {
+    confirmDelete(bookID) {
+      // Show confirmation dialog
+      const confirmed = window.confirm('Are you sure you want to delete this book?');
+      
+      if (confirmed) {
+        this.deleteBook(bookID);
+      }
+    },
+
+    async deleteBook(bookID) {
+      console.log('Deleting book with ID:', bookID);  // Debugging line
+      if (!bookID) {
+        console.error('Error: bookID is undefined or null');
+        return;
+      }
+      
       try {
-        await BookService.deleteBook(bookId);
-        this.fetchBooks();
+        await BookService.deleteBook(bookID);
+        console.log('Book deleted successfully');  // Debugging line
+        await this.fetchBooks();  // Refresh the book list after deleting
       } catch (error) {
         console.error('Error deleting book:', error);
       }
@@ -111,17 +132,20 @@ export default {
     },
 
     async updateBook() {
-      this.isUpdating = true;
-      try {
-        await BookService.updateBook(this.editingBook.id, this.editingBook);
-        this.fetchBooks();
-        this.editingBook = null;
-      } catch (error) {
-        console.error('Error updating book:', error);
-      } finally {
-        this.isUpdating = false;
-      }
-    }
+  this.isUpdating = true;
+  try {
+    await BookService.updateBook(this.editingBook.ID, this.editingBook);
+    console.log('Book updated successfully');
+    await this.fetchBooks();  // Refresh the book list after updating
+    this.editingBook = null;
+  } catch (error) {
+    console.error('Error updating book:', error.response?.data || error.message);
+    alert('Error updating book. Please try again.');  // Show user-friendly message
+  } finally {
+    this.isUpdating = false;
+  }
+}
+
   }
 };
 </script>

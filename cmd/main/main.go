@@ -1,14 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/gorilla/mux"
-	"github.com/rs/cors"
 	"github.com/moheddine-belhaj/Book_store/pkg/routes"
+	"github.com/rs/cors"
 )
 
 func main() {
+	fmt.Println("Starting...")
 	r := mux.NewRouter()
 
 	// Register the routes for the book store
