@@ -1,8 +1,8 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"github.com/moheddine-belhaj/Book_store/pkg/config"
+	"gorm.io/gorm"
 )
 
 var db *gorm.DB
@@ -31,14 +31,19 @@ func GetAllBooks() []Book {
 	return books
 }
 
-func GetBookById(id uint) (*Book, *gorm.DB) {
-	var book Book
-	result := db.First(&book, id)
-	return &book, result
+func GetBookById(Id int64) (*Book, *gorm.DB) {
+	var getBook Book
+	db := db.Where("ID=?", Id).Find(&getBook)
+	return &getBook, db
 }
 
-func DeleteBook(id uint) Book {
+func DeleteBook(id int64) Book {
 	var book Book
 	db.Delete(&book, id)
 	return book
 }
+
+// func UpdateBook(b *Book) (*Book, *gorm.DB) {
+// 	result := db.Save(b)
+// 	return b, result
+// }
