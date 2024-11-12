@@ -20,29 +20,39 @@ cd Book_store
 ```
 
 **2. Set Up the PostgreSQL Database**
+
 Create a PostgreSQL database and note the connection details (host, port, user, password, dbname) as they are required for configuring the environment.
 
 **3. Install Dependencies**
 
 ## Install Dependencies
 
+## Important Packages and library
+
 #### Routing
+
 Install the `Gorilla mux` router for handling routes:
 
 ```sh
 go get github.com/gorilla/mux
 ```
 
-#### Install GORM and the PostgreSQL driver:
+#### GORM :
 
 ```sh 
 go get gorm.io/gorm
 
 ```
+
+#### PostgreSQL driver
+
 ```sh
 go get gorm.io/driver/postgres
 ```
-#### Install the cors package for Cross-Origin Resource Sharing support:
+
+#### Middleware 
+
+Install the `cors` package for Cross-Origin Resource Sharing support:
 
 ```sh
 go get github.com/rs/cors
@@ -57,11 +67,14 @@ go get github.com/jinzhu/now
 
 ```
 
+## Run the Application
+
+This command will automatically download and tidy up all the necessary packages based on your `go.mod` file.
+
 ```sh
 go mod tidy
 ```
-
-## Run the Application
+To start the application, use:
 
 ```sh
 go run main.go
