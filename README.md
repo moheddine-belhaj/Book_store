@@ -24,14 +24,14 @@ Create a PostgreSQL database and note the connection details (host, port, user, 
 
 3. Install Dependencies
 
-# Routing
+#### Routing
 Install the `Gorilla mux` router for handling routes:
 
 ```sh
 go get github.com/gorilla/mux
 ```
 
-# Install GORM and the PostgreSQL driver:
+#### Install GORM and the PostgreSQL driver:
 
 ```sh 
 go get gorm.io/gorm
@@ -40,13 +40,13 @@ go get gorm.io/gorm
 ```sh
 go get gorm.io/driver/postgres
 ```
-# Install the cors package for Cross-Origin Resource Sharing support:
+#### Install the cors package for Cross-Origin Resource Sharing support:
 
 ```sh
 go get github.com/rs/cors
 ```
 
-# Install additional PostgreSQL-related packages:
+#### Install additional PostgreSQL-related packages:
 
 ```sh
 go get github.com/jackc/pgx/v5
