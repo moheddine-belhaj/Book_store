@@ -4,11 +4,11 @@ This is a Go-based REST API for a Book Store. It uses mux for routing, GORM as a
 Requirements
 To run this project, you need the following:
 
-[GO 1.23.0](https://go.dev/dl/) 
+- [GO 1.23.0](https://go.dev/dl/) 
 
-[GO 1.23.0](https://www.postgresql.org/download/)
+- [PostgreSQL](https://www.postgresql.org/download/)
 
-[Git]
+- Git
 
 ## Setup
 1. Clone the Repository
