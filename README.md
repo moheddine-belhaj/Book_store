@@ -27,8 +27,6 @@ Create a PostgreSQL database and note the connection details (host, port, user, 
 
 ## Install Dependencies
 
-## Important Packages and library
-
 #### Routing
 
 Install the `Gorilla mux` router for handling routes:
