@@ -11,7 +11,7 @@ To run this project, you need the following:
 - Git
 
 ## Setup
-1. Clone the Repository
+**1. Clone the Repository**
 
 ```sh
 git clone https://github.com/moheddine-belhaj/Book_store.git
@@ -19,10 +19,12 @@ cd Book_store
 
 ```
 
-2. Set Up the PostgreSQL Database
+**2. Set Up the PostgreSQL Database**
 Create a PostgreSQL database and note the connection details (host, port, user, password, dbname) as they are required for configuring the environment.
 
-3. Install Dependencies
+**3. Install Dependencies**
+
+## Install Dependencies
 
 #### Routing
 Install the `Gorilla mux` router for handling routes:
@@ -54,8 +56,6 @@ go get github.com/jinzhu/inflection
 go get github.com/jinzhu/now
 
 ```
-
-## Install Dependencies
 
 ```sh
 go mod tidy
