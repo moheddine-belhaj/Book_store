@@ -52,10 +52,18 @@
       </form>
     </div>
   </div>
+
+
+  <div>
+    <button @click="$emit('change-page')">Back to Home</button>
+  </div>
 </template>
 
 <script>
 import BookService from './services/BookService';
+
+
+
 
 export default {
   data() {
@@ -149,6 +157,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 #app {
